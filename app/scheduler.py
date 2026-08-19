@@ -1,5 +1,5 @@
 """
-Daily strategy runner â€” called by APScheduler and manually via API.
+Daily strategy runner    '                                   called by APScheduler and manually via API.
 
 Sequence:
   1. Fetch latest market data for all symbols
@@ -53,13 +53,13 @@ def run_daily_strategy(triggered_by: str = "scheduler") -> dict:
     broker = get_broker()
 
     try:
-        # â”€â”€ 1. Fetch market data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   1. Fetch market data    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         logger.info("Fetching market data for %s", settings.symbol_list)
         market_data = get_all_symbols(force_refresh=True)
         if not market_data:
             raise RuntimeError("No market data returned from yfinance")
 
-        # â”€â”€ 2. Get current account state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   2. Get current account state    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         account = broker.get_account()
         held_symbols = [p.symbol for p in account.positions]
         open_count = len(held_symbols)
@@ -70,7 +70,7 @@ def run_daily_strategy(triggered_by: str = "scheduler") -> dict:
             open_count,
         )
 
-        # â”€â”€ 3. Generate signals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   3. Generate signals    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         signals = generate_all_signals(
             market_data=market_data,
             current_equity=account.equity,
@@ -98,7 +98,7 @@ def run_daily_strategy(triggered_by: str = "scheduler") -> dict:
             except Exception as exc:
                 logger.error("Failed to persist signal for %s: %s", sig.symbol, exc)
 
-        # â”€â”€ 4. Process exits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   4. Process exits    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         exit_signals = [s for s in signals if s.exit_signal]
         for sig in exit_signals:
             position = next((p for p in account.positions if p.symbol == sig.symbol), None)
@@ -133,12 +133,12 @@ def run_daily_strategy(triggered_by: str = "scheduler") -> dict:
                 errors.append(f"SELL {sig.symbol}: {result.error}")
                 logger.error("SELL failed for %s: %s", sig.symbol, result.error)
 
-        # â”€â”€ 5. Refresh account after exits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   5. Refresh account after exits    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         account = broker.get_account()
         held_symbols = [p.symbol for p in account.positions]
         open_count = len(held_symbols)
 
-        # â”€â”€ 6. Process entries â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   6. Process entries    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         entry_signals = [
             s for s in signals
             if s.entry_signal
@@ -161,7 +161,7 @@ def run_daily_strategy(triggered_by: str = "scheduler") -> dict:
                 available_cash=account.cash,
             )
             if shares <= 0:
-                logger.warning("Skipping %s â€” insufficient cash", sig.symbol)
+                logger.warning("Skipping %s    '                                   insufficient cash", sig.symbol)
                 continue
 
             result = broker.submit_buy(symbol=sig.symbol, shares=shares)
@@ -192,7 +192,7 @@ def run_daily_strategy(triggered_by: str = "scheduler") -> dict:
                 errors.append(f"BUY {sig.symbol}: {result.error}")
                 logger.error("BUY failed for %s: %s", sig.symbol, result.error)
 
-        # â”€â”€ 7. Snapshot portfolio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   7. Snapshot portfolio    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         final_account = broker.get_account()
         positions_dict = {
             p.symbol: {
@@ -212,10 +212,10 @@ def run_daily_strategy(triggered_by: str = "scheduler") -> dict:
             positions=positions_dict,
         )
 
-        # â”€â”€ 8. Log run â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   8. Log run    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         duration = time.monotonic() - start_ts
         status = "error" if errors else "success"
-        msg = "; ".join(errors) if errors else f"OK â€” {trades_executed} trade(s)"
+        msg = "; ".join(errors) if errors else f"OK    '                                   {trades_executed} trade(s)"
         _insert_scheduler_run(
             db=db,
             run_date=today,

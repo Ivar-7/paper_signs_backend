@@ -1,4 +1,4 @@
-"""Trades router — HTTP concerns only."""
+"""Trades router                    HTTP concerns only."""
 
 from __future__ import annotations
 

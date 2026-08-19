@@ -1,4 +1,4 @@
-"""Entry point — run from the project root: python paper_signs_backend/run.py"""
+"""Entry point          run from the project root: python paper_signs_backend/run.py"""
 
 import sys
 import os

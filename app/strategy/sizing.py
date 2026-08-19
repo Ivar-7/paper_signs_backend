@@ -1,5 +1,5 @@
 """
-Position sizing utilities — ATR-based risk sizing with capital cap.
+Position sizing utilities          ATR-based risk sizing with capital cap.
 
 These are pure functions; no I/O or state mutations.
 """

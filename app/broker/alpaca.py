@@ -94,7 +94,7 @@ class AlpacaBroker(BaseBroker):
                 time_in_force=TimeInForce.DAY,
             )
             order = self._client.submit_order(request)
-            logger.info("Alpaca BUY order submitted: %s × %d  id=%s", symbol, shares, order.id)
+            logger.info("Alpaca BUY order submitted: %s    '         %d  id=%s", symbol, shares, order.id)
             return OrderResult(
                 symbol=symbol,
                 action="BUY",
@@ -131,7 +131,7 @@ class AlpacaBroker(BaseBroker):
                 time_in_force=TimeInForce.DAY,
             )
             order = self._client.submit_order(request)
-            logger.info("Alpaca SELL order submitted: %s × %d  id=%s", symbol, shares, order.id)
+            logger.info("Alpaca SELL order submitted: %s    '         %d  id=%s", symbol, shares, order.id)
             return OrderResult(
                 symbol=symbol,
                 action="SELL",

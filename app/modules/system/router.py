@@ -1,4 +1,4 @@
-"""System router — status and manual trigger endpoints."""
+"""System router                    status and manual trigger endpoints."""
 
 from __future__ import annotations
 

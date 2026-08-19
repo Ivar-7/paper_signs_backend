@@ -1,5 +1,5 @@
 """
-Strategy algorithm constants — fixed values that define the trading logic.
+Strategy algorithm constants          fixed values that define the trading logic.
 
 These are NOT environment variables. They are algorithm parameters that should
 only change after deliberate research and backtesting. Do not move these to .env.

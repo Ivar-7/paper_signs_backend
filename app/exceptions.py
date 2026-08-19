@@ -1,4 +1,4 @@
-"""Centralised exception handlers — translates domain errors to HTTP responses."""
+"""Centralised exception handlers                    translates domain errors to HTTP responses."""
 
 from __future__ import annotations
 

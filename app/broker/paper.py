@@ -17,6 +17,7 @@ from typing import Any, Dict, List, Optional
 from paper_signs_backend.app.broker.base import BaseBroker, BrokerAccount, BrokerPosition, OrderResult
 from paper_signs_backend.app.config import get_settings
 from paper_signs_backend.app.data.market import get_ohlcv
+from paper_signs_backend.app.strategy.constants import INITIAL_CAPITAL
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -30,8 +31,8 @@ def _load_state() -> Dict[str, Any]:
         with open(_STATE_FILE, "r") as f:
             return json.load(f)
     return {
-        "cash": settings.initial_capital,
-        "positions": {},  # symbol → {shares, avg_entry_price, entry_date}
+        "cash": INITIAL_CAPITAL,
+        "positions": {},  # symbol -> {shares, avg_entry_price, entry_date}
     }
 
 
@@ -143,7 +144,7 @@ class PaperBroker(BaseBroker):
             }
 
         self._persist()
-        logger.info("PaperBroker BUY %s × %d @ %.4f", symbol, shares, price)
+        logger.info("PaperBroker BUY %s    '         %d @ %.4f", symbol, shares, price)
         return OrderResult(
             symbol=symbol,
             action="BUY",
@@ -185,7 +186,7 @@ class PaperBroker(BaseBroker):
 
         self._persist()
         pnl = (price - pos["avg_entry_price"]) * sell_shares
-        logger.info("PaperBroker SELL %s × %d @ %.4f  PnL=%.2f", symbol, sell_shares, price, pnl)
+        logger.info("PaperBroker SELL %s    '         %d @ %.4f  PnL=%.2f", symbol, sell_shares, price, pnl)
         return OrderResult(
             symbol=symbol,
             action="SELL",

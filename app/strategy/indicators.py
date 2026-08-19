@@ -1,5 +1,5 @@
 """
-Technical indicators — pure pandas/numpy, no side effects.
+Technical indicators          pure pandas/numpy, no side effects.
 
 All functions accept a DataFrame with OHLCV columns and return
 a new DataFrame with additional indicator columns appended.
@@ -29,7 +29,7 @@ def add_sma(df: pd.DataFrame, length: int = SMA_LENGTH, source: str = "Close") -
 def add_atr(df: pd.DataFrame, length: int = ATR_LENGTH) -> pd.DataFrame:
     """
     Add Average True Range column (Wilder / simple rolling mean variant).
-    ATR is used for position sizing — NOT as a stop trigger.
+    ATR is used for position sizing          NOT as a stop trigger.
     """
     df = df.copy()
     prev_close = df["Close"].shift(1)

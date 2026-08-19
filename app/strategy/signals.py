@@ -1,5 +1,5 @@
 """
-Signal generation — derives entry/exit signals from indicator columns.
+Signal generation          derives entry/exit signals from indicator columns.
 
 Signals are generated using information available at the PREVIOUS close.
 They are acted upon at the NEXT open to avoid look-ahead bias.

@@ -1,4 +1,4 @@
-"""System service — scheduler access and strategy trigger."""
+"""System service                    scheduler access and strategy trigger."""
 
 from __future__ import annotations
 

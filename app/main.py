@@ -1,4 +1,4 @@
-"""Application entry point — creation, middleware, routers, exception handlers."""
+"""Application entry point                    creation, middleware, routers, exception handlers."""
 
 from __future__ import annotations
 
@@ -54,7 +54,7 @@ async def lifespan(app: FastAPI):
     )
     _scheduler.start()
     system_service.set_scheduler(_scheduler)
-    logger.info("Scheduler started — next run: %s", _scheduler.get_job("daily_strategy").next_run_time)
+    logger.info("Scheduler started                    next run: %s", _scheduler.get_job("daily_strategy").next_run_time)
 
     yield
 
@@ -64,7 +64,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="TrendBot",
-    description="100/50 Donchian Trend + SMA200 + ATR Sizing — Paper Trading",
+    description="100/50 Donchian Trend + SMA200 + ATR Sizing                    Paper Trading",
     version="1.0.0",
     lifespan=lifespan,
 )

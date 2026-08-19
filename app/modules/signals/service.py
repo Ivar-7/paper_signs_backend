@@ -1,4 +1,4 @@
-"""Signals service — business logic and persistence."""
+"""Signals service                    business logic and persistence."""
 
 from __future__ import annotations
 

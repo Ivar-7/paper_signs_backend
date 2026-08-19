@@ -1,4 +1,4 @@
-"""Trades service — business logic and persistence."""
+"""Trades service                    business logic and persistence."""
 
 from __future__ import annotations
 

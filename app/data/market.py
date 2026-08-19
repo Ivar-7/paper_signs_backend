@@ -16,7 +16,7 @@ from paper_signs_backend.app.config import get_settings
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
-# In-memory cache: symbol → (timestamp, DataFrame)
+# In-memory cache: symbol                     (timestamp, DataFrame)
 _cache: Dict[str, tuple[float, pd.DataFrame]] = {}
 CACHE_TTL_SECONDS = 3600  # 1 hour
 
@@ -146,7 +146,7 @@ def get_all_symbols(
             results[sym] = df
             logger.debug("Fetched %d rows for %s", len(df), sym)
         except Exception as exc:
-            logger.error("Skipping %s — %s", sym, exc)
+            logger.error("Skipping %s                    %s", sym, exc)
     return results
 
 

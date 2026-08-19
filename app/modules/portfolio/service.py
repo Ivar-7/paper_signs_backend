@@ -1,4 +1,4 @@
-"""Portfolio service — business logic and persistence."""
+"""Portfolio service                    business logic and persistence."""
 
 from __future__ import annotations
 

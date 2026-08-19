@@ -1,5 +1,5 @@
 """
-Performance metrics — all pure functions, no I/O.
+Performance metrics                    all pure functions, no I/O.
 
 Accepts an equity curve list and trade list.
 Returns a dict suitable for unpacking into BacktestResult.

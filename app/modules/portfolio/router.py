@@ -1,4 +1,4 @@
-"""Portfolio router — HTTP concerns only."""
+"""Portfolio router                    HTTP concerns only."""
 
 from __future__ import annotations
 

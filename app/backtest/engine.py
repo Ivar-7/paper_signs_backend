@@ -1,7 +1,7 @@
 """
 Vectorized backtest engine.
 
-Signal generated at close[t] â†’ order fills at open[t+1].
+Signal generated at close[t]    '                                      order fills at open[t+1].
 No look-ahead bias. Includes transaction cost modeling.
 """
 
@@ -30,9 +30,9 @@ _settings = get_settings()
 logger = logging.getLogger(__name__)
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
 # Data classes
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
 
 @dataclass
 class BacktestTrade:
@@ -56,7 +56,7 @@ class BacktestResult:
     final_equity: float
     equity_curve: List[Dict]        # [{date, equity}, ...]
     trades: List[BacktestTrade]
-    per_symbol: Dict[str, Dict]     # symbol â†’ {trades, pnl, win_rate}
+    per_symbol: Dict[str, Dict]     # symbol    '                                      {trades, pnl, win_rate}
     parameters: Dict                # snapshot of params used
     cagr: float = 0.0
     max_drawdown: float = 0.0
@@ -70,9 +70,9 @@ class BacktestResult:
     avg_holding_days: float = 0.0
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
 # Core engine
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
 
 class BacktestEngine:
     """
@@ -100,7 +100,7 @@ class BacktestEngine:
         atr_multiplier: Optional[float] = None,
         commission_pct: float = 0.001,  # 0.10% per side
     ) -> None:
-                self.symbols = symbols or list(BACKTEST_PERIODS.keys())
+        self.symbols = symbols or list(BACKTEST_PERIODS.keys())
         self.initial_capital = initial_capital or INITIAL_CAPITAL
         self.risk_per_trade = risk_per_trade or RISK_PER_TRADE
         self.max_positions = max_positions or MAX_POSITIONS
@@ -140,7 +140,7 @@ class BacktestEngine:
                 exit_lookback=self.exit_lookback,
                 atr_length=self.atr_length,
             )
-            # Shift signals: signal at close[t] â†’ next open[t+1]
+            # Shift signals: signal at close[t]    '                                      next open[t+1]
             df["FillOpen"] = df["Open"].shift(-1)
             prepared[sym] = df
 
@@ -172,9 +172,9 @@ class BacktestEngine:
         if not all_dates:
             raise RuntimeError(f"No common dates in range [{start}, {end}]")
 
-        # â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   State    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         cash = self.initial_capital
-        # symbol â†’ {shares, entry_price, entry_date, atr_at_entry}
+        # symbol    '                                      {shares, entry_price, entry_date, atr_at_entry}
         positions: Dict[str, Dict] = {}
         equity_curve: List[Dict] = []
         all_trades: List[BacktestTrade] = []
@@ -183,7 +183,7 @@ class BacktestEngine:
         atr_col = f"ATR{self.atr_length}"
 
         for dt in all_dates:
-            # â”€â”€ Mark-to-market equity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            #    '                                     '                                   Mark-to-market equity    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
             market_value = sum(
                 pos["shares"] * float(prepared[sym].loc[dt, "Close"])
                 for sym, pos in positions.items()
@@ -192,7 +192,7 @@ class BacktestEngine:
             equity = cash + market_value
             equity_curve.append({"date": dt.strftime("%Y-%m-%d"), "equity": round(equity, 2)})
 
-            # â”€â”€ 1. Process exits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            #    '                                     '                                   1. Process exits    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
             for sym in list(positions.keys()):
                 if sym not in prepared or dt not in prepared[sym].index:
                     continue
@@ -231,7 +231,7 @@ class BacktestEngine:
                     ))
                     del positions[sym]
 
-            # â”€â”€ 2. Process entries â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            #    '                                     '                                   2. Process entries    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
             if len(positions) < self.max_positions:
                 candidates = []
                 for sym, df in prepared.items():
@@ -289,7 +289,7 @@ class BacktestEngine:
                         "cost": cost,
                     }
 
-        # â”€â”€ Final mark-to-market for open positions â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   Final mark-to-market for open positions    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         last_dt = all_dates[-1]
         for sym, pos in positions.items():
             if sym in prepared and last_dt in prepared[sym].index:
@@ -309,7 +309,7 @@ class BacktestEngine:
                     holding_days=(last_dt - pd.Timestamp(pos["entry_date"])).days,
                 ))
 
-        # â”€â”€ Compute metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   Compute metrics    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         from paper_signs_backend.app.backtest.metrics import compute_metrics
         metrics = compute_metrics(
             equity_curve=equity_curve,
@@ -317,7 +317,7 @@ class BacktestEngine:
             initial_equity=self.initial_capital,
         )
 
-        # â”€â”€ Per-symbol breakdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #    '                                     '                                   Per-symbol breakdown    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
         per_symbol: Dict[str, Dict] = {}
         for trade in all_trades:
             s = trade.symbol
@@ -337,7 +337,6 @@ class BacktestEngine:
             start_date=all_dates[0].strftime("%Y-%m-%d"),
             end_date=all_dates[-1].strftime("%Y-%m-%d"),
             initial_equity=self.initial_capital,
-            final_equity=equity_curve[-1]["equity"] if equity_curve else self.initial_capital,
             equity_curve=equity_curve,
             trades=all_trades,
             per_symbol=per_symbol,
@@ -370,9 +369,9 @@ class BacktestEngine:
         }
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
 # Robustness test helpers
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#    '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                     '                                  
 
 def run_parameter_perturbation(
     period_name: str = "validation",
@@ -382,7 +381,7 @@ def run_parameter_perturbation(
     Run the backtest across a grid of parameter variations.
     Returns a list of result dicts.
     """
-        date_range = BACKTEST_PERIODS.get(period_name, ("2020-01-01", "2023-12-31"))
+    date_range = BACKTEST_PERIODS.get(period_name, ("2020-01-01", "2023-12-31"))
     start, end = date_range
 
     entry_variants = [80, 90, 100, 110, 120]
@@ -422,7 +421,7 @@ def run_market_removal(
     market_data: Optional[Dict[str, pd.DataFrame]] = None,
 ) -> List[Dict]:
     """Remove one market at a time and re-run the backtest."""
-        date_range = BACKTEST_PERIODS.get(period_name, ("2020-01-01", "2023-12-31"))
+    date_range = BACKTEST_PERIODS.get(period_name, ("2020-01-01", "2023-12-31"))
     start, end = date_range
 
     results = []
@@ -459,7 +458,7 @@ def run_cost_stress(
     market_data: Optional[Dict[str, pd.DataFrame]] = None,
 ) -> List[Dict]:
     """Run with increasing transaction costs."""
-        date_range = BACKTEST_PERIODS.get(period_name, ("2020-01-01", "2023-12-31"))
+    date_range = BACKTEST_PERIODS.get(period_name, ("2020-01-01", "2023-12-31"))
     start, end = date_range
 
     costs = [0.0, 0.0005, 0.001, 0.002]

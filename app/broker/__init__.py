@@ -1,5 +1,5 @@
 """
-Broker factory — returns the configured broker instance.
+Broker factory    '                                   returns the configured broker instance.
 """
 
 from __future__ import annotations
