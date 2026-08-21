@@ -1,4 +1,4 @@
-"""Entry point          run from the project root: python paper_signs_backend/run.py"""
+"""Entry point - run from the project root: python paper_signs_backend/run.py"""
 
 import sys
 import os
@@ -15,6 +15,6 @@ if __name__ == "__main__":
         "paper_signs_backend.app.main:app",
         host=settings.host,
         port=settings.port,
-        reload=False,
+        reload=True,
         log_level=settings.log_level.lower(),
     )

@@ -1,4 +1,4 @@
-"""Application entry point                    creation, middleware, routers, exception handlers."""
+"""Application entry point - creation, middleware, routers, exception handlers."""
 
 from __future__ import annotations
 
@@ -13,9 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from paper_signs_backend.app.config import get_settings
 from paper_signs_backend.app.exceptions import register_exception_handlers
 from paper_signs_backend.app.models.database import init_db
-from paper_signs_backend.app.modules.backtest.router import router as backtest_router
 from paper_signs_backend.app.modules.portfolio.router import router as portfolio_router
 from paper_signs_backend.app.modules.signals.router import router as signals_router
+from paper_signs_backend.app.modules.strategizer.router import router as strategizer_router
 from paper_signs_backend.app.modules.system.router import router as system_router
 from paper_signs_backend.app.modules.system import service as system_service
 from paper_signs_backend.app.modules.trades.router import router as trades_router
@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
         level=getattr(logging, settings.log_level.upper(), logging.INFO),
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
-    logger.info("TrendBot starting up")
+    logger.info("PaperSigns Strategizer starting up")
     init_db()
 
     cron_parts = settings.schedule_cron.split()
@@ -54,18 +54,18 @@ async def lifespan(app: FastAPI):
     )
     _scheduler.start()
     system_service.set_scheduler(_scheduler)
-    logger.info("Scheduler started                    next run: %s", _scheduler.get_job("daily_strategy").next_run_time)
+    logger.info("Scheduler background service initialized")
 
     yield
 
     _scheduler.shutdown(wait=False)
-    logger.info("TrendBot shutting down")
+    logger.info("PaperSigns Strategizer shutting down")
 
 
 app = FastAPI(
-    title="TrendBot",
-    description="100/50 Donchian Trend + SMA200 + ATR Sizing                    Paper Trading",
-    version="1.0.0",
+    title="PaperSigns Strategizer",
+    description="Automated Paper Trading Strategizer (Donchian 100/50 + SMA200 + ATR20)",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -80,7 +80,7 @@ app.add_middleware(
 register_exception_handlers(app)
 
 app.include_router(system_router)
+app.include_router(strategizer_router)
 app.include_router(portfolio_router)
 app.include_router(trades_router)
 app.include_router(signals_router)
-app.include_router(backtest_router)

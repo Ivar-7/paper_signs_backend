@@ -15,6 +15,38 @@ class Base(DeclarativeBase):
     pass
 
 
+class PaperAccount(Base):
+    """Simulated broker account cash state."""
+
+    __tablename__ = "paper_account"
+
+    id = Column(Integer, primary_key=True)
+    cash = Column(Float, nullable=False, default=100000.0)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class PaperPosition(Base):
+    """Simulated broker open positions."""
+
+    __tablename__ = "paper_positions"
+
+    symbol = Column(String(16), primary_key=True)
+    shares = Column(Integer, nullable=False)
+    avg_entry_price = Column(Float, nullable=False)
+    entry_date = Column(String(16), nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class TrackedSymbol(Base):
+    """Dynamically tracked market instruments."""
+
+    __tablename__ = "tracked_symbols"
+
+    symbol = Column(String(16), primary_key=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class PortfolioSnapshot(Base):
     """Daily snapshot of portfolio equity, cash, and positions."""
 
@@ -67,50 +99,6 @@ class Signal(Base):
     __table_args__ = (
         UniqueConstraint("signal_date", "symbol", name="uq_signal_date_symbol"),
     )
-
-
-class BacktestResult(Base):
-    """Stored metrics from a backtest run."""
-
-    __tablename__ = "backtest_results"
-
-    id                = Column(Integer,    primary_key=True, index=True)
-    period_name       = Column(String(32), nullable=False, index=True)
-    start_date        = Column(Date,       nullable=False)
-    end_date          = Column(Date,       nullable=False)
-    cagr              = Column(Float,      nullable=True)
-    max_drawdown      = Column(Float,      nullable=True)
-    sharpe            = Column(Float,      nullable=True)
-    sortino           = Column(Float,      nullable=True)
-    profit_factor     = Column(Float,      nullable=True)
-    win_rate          = Column(Float,      nullable=True)
-    avg_win           = Column(Float,      nullable=True)
-    avg_loss          = Column(Float,      nullable=True)
-    total_trades      = Column(Integer,    nullable=True)
-    avg_holding_days  = Column(Float,      nullable=True)
-    final_equity      = Column(Float,      nullable=True)
-    equity_curve      = Column(JSON,       nullable=True)
-    per_symbol_metrics = Column(JSON,      nullable=True)
-    parameters        = Column(JSON,       nullable=True)
-    created_at        = Column(DateTime,   default=datetime.utcnow)
-
-
-class RobustnessResult(Base):
-    """Results from parameter perturbation / market-removal tests."""
-
-    __tablename__ = "robustness_results"
-
-    id          = Column(Integer,     primary_key=True, index=True)
-    test_type   = Column(String(32),  nullable=False)
-    test_label  = Column(String(128), nullable=False)
-    period_name = Column(String(32),  nullable=False)
-    cagr        = Column(Float,       nullable=True)
-    max_drawdown = Column(Float,      nullable=True)
-    sharpe      = Column(Float,       nullable=True)
-    profit_factor = Column(Float,     nullable=True)
-    total_trades = Column(Integer,    nullable=True)
-    parameters  = Column(JSON,        nullable=True)
-    created_at  = Column(DateTime,    default=datetime.utcnow)
 
 
 class SchedulerRun(Base):

@@ -1,7 +1,7 @@
 # TrendBot — Automated Donchian Trend Strategy
 
 **100/50 Donchian Channel + SMA200 regime filter + ATR(20) position sizing**  
-Fully automated paper trading bot with a premium web dashboard. 100% free — no subscriptions, no paid APIs.
+Fully automated paper trading bot with a premium web dashboard.
 
 ---
 

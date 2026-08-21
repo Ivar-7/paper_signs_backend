@@ -64,3 +64,7 @@ class BaseBroker(ABC):
     @abstractmethod
     def get_last_price(self, symbol: str) -> Optional[float]:
         """Return the most recent available price for *symbol*."""
+
+    def reset_account(self, initial_capital: float = 100_000.0) -> None:
+        """Optional hook to reset paper account state."""
+        pass

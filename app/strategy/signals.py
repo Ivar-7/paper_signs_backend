@@ -1,15 +1,15 @@
 """
-Signal generation          derives entry/exit signals from indicator columns.
+Signal generation - derives entry/exit signals, probability scores, and price targets.
 
-Signals are generated using information available at the PREVIOUS close.
-They are acted upon at the NEXT open to avoid look-ahead bias.
+Signals are generated using information available at the latest close/bar.
+They are acted upon at the next open or manually executed.
 """
 
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
-from typing import Dict, List, Optional
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -25,6 +25,7 @@ from paper_signs_backend.app.strategy.constants import (
     SMA_LENGTH,
 )
 from paper_signs_backend.app.strategy.indicators import add_all_indicators
+from paper_signs_backend.app.strategy.scoring import calculate_strategy_score
 
 
 @dataclass
@@ -42,6 +43,18 @@ class SymbolSignal:
     suggested_cost: Optional[float] = None
     entry_reason: str = ""
     exit_reason: str = ""
+    # Enhanced scoring & targets
+    probability_score: float = 0.0
+    recommendation: str = "NEUTRAL"
+    stop_loss: Optional[float] = None
+    stop_loss_pct: Optional[float] = None
+    take_profit_1: Optional[float] = None
+    take_profit_2: Optional[float] = None
+    take_profit_3: Optional[float] = None
+    risk_reward_ratio: Optional[float] = None
+    distance_to_breakout_pct: float = 0.0
+    sma200_clearance_pct: float = 0.0
+    checklist: Dict[str, Any] = field(default_factory=dict)
 
 
 def _safe_float(val) -> Optional[float]:
@@ -71,16 +84,13 @@ def generate_signal(
     max_position_pct: float = MAX_POSITION_PCT,
 ) -> Optional[SymbolSignal]:
     """
-    Compute the signal for a single symbol given its OHLCV DataFrame.
-
-    Uses the last row (today's close) to assess whether conditions are met.
-    Returns None if insufficient data.
+    Compute the signal, probability score, and targets for a single symbol given its OHLCV DataFrame.
     """
     min_rows = max(sma_length, entry_lookback) + 10
     if len(df) < min_rows:
         return None
 
-    df = add_all_indicators(
+    df_ind = add_all_indicators(
         df,
         sma_length=sma_length,
         entry_lookback=entry_lookback,
@@ -88,8 +98,8 @@ def generate_signal(
         atr_length=atr_length,
     )
 
-    row = df.iloc[-1]
-    signal_date = str(df.index[-1].date())
+    row = df_ind.iloc[-1]
+    signal_date = str(df_ind.index[-1].date())
 
     close = _safe_float(row["Close"])
     entry_high = _safe_float(row.get("EntryHigh"))
@@ -99,6 +109,18 @@ def generate_signal(
 
     if close is None or sma200 is None or entry_high is None or exit_low is None:
         return None
+
+    # Calculate rich probability scoring and price targets
+    score_res = calculate_strategy_score(
+        df=df_ind,
+        symbol=symbol,
+        already_held=already_held,
+        entry_lookback=entry_lookback,
+        exit_lookback=exit_lookback,
+        sma_length=sma_length,
+        atr_length=atr_length,
+        atr_multiplier=atr_multiplier,
+    )
 
     # -- Entry conditions -----------------------------------
     entry_signal = (
@@ -127,19 +149,29 @@ def generate_signal(
             exit_reason_parts.append(f"< SMA{sma_length} {sma200:.2f}")
     exit_reason = " | ".join(exit_reason_parts) if exit_signal else ""
 
-    # -- Position sizing (when entering) -------------------
+    # -- Position sizing (when entering or evaluating trade) -------------------
     suggested_shares: Optional[int] = None
     suggested_cost: Optional[float] = None
 
-    if entry_signal and atr20 is not None and atr20 > 0:
-        risk_dollars = current_equity * risk_per_trade
-        stop_distance = atr_multiplier * atr20
+    effective_atr = atr20 if (atr20 is not None and atr20 > 0) else (close * 0.02)
+    risk_dollars = current_equity * risk_per_trade
+    stop_distance = atr_multiplier * effective_atr
+    if stop_distance > 0 and close > 0:
         risk_shares = math.floor(risk_dollars / stop_distance)
         capital_shares = math.floor(current_equity * max_position_pct / close)
-        shares = min(risk_shares, capital_shares)
-        if shares > 0:
-            suggested_shares = shares
-            suggested_cost = shares * close
+        shares = max(1, min(risk_shares, capital_shares))
+        suggested_shares = shares
+        suggested_cost = round(shares * close, 2)
+
+    checklist_dict = {}
+    if score_res:
+        checklist_dict = {
+            "trend_above_sma200": score_res.checklist.trend_above_sma200,
+            "breakout_donchian_high": score_res.checklist.breakout_donchian_high,
+            "volatility_healthy": score_res.checklist.volatility_healthy,
+            "volume_confirmed": score_res.checklist.volume_confirmed,
+            "details": score_res.checklist.details,
+        }
 
     return SymbolSignal(
         symbol=symbol,
@@ -155,6 +187,17 @@ def generate_signal(
         suggested_cost=suggested_cost,
         entry_reason=entry_reason,
         exit_reason=exit_reason,
+        probability_score=score_res.score if score_res else 0.0,
+        recommendation=score_res.recommendation if score_res else "NEUTRAL",
+        stop_loss=score_res.stop_loss if score_res else round(close * 0.95, 2),
+        stop_loss_pct=score_res.stop_loss_pct if score_res else -5.0,
+        take_profit_1=score_res.take_profit_1 if score_res else round(close * 1.075, 2),
+        take_profit_2=score_res.take_profit_2 if score_res else round(close * 1.125, 2),
+        take_profit_3=score_res.take_profit_3 if score_res else round(close * 1.20, 2),
+        risk_reward_ratio=score_res.risk_reward_ratio if score_res else 2.5,
+        distance_to_breakout_pct=score_res.distance_to_breakout_pct if score_res else 0.0,
+        sma200_clearance_pct=score_res.sma200_clearance_pct if score_res else 0.0,
+        checklist=checklist_dict,
     )
 
 
@@ -167,7 +210,7 @@ def generate_all_signals(
 ) -> List[SymbolSignal]:
     """
     Generate signals for all symbols in *market_data*.
-    Returns a list sorted by entry priority (most extended breakout first).
+    Returns a list sorted primarily by probability score (highest probability first).
     """
     signals: List[SymbolSignal] = []
     held_set = set(s.upper() for s in held_symbols)
@@ -184,10 +227,9 @@ def generate_all_signals(
         if sig is not None:
             signals.append(sig)
 
+    # Sort descending by probability_score, then entry_signal
     signals.sort(
-        key=lambda s: (
-            s.close / s.sma200 if (s.entry_signal and s.sma200 and s.sma200 > 0) else 0
-        ),
+        key=lambda s: (s.entry_signal, s.probability_score),
         reverse=True,
     )
     return signals
