@@ -46,6 +46,13 @@ class Settings(BaseSettings):
     def symbol_list(self) -> List[str]:
         return [s.strip().upper() for s in self.symbols.split(",") if s.strip()]
 
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def fix_database_url(cls, v: str) -> str:
+        if isinstance(v, str) and v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql://", 1)
+        return v
+
     @field_validator("broker")
     @classmethod
     def validate_broker(cls, v: str) -> str:

@@ -17,7 +17,7 @@ ATR_LENGTH: int = 20        # ATR period for position sizing
 ATR_MULTIPLIER: float = 2.0 # ATR multiplier for stop distance calculation
 
 # Risk parameters
-RISK_PER_TRADE: float = 0.005   # fraction of equity risked per trade (0.5%)
+RISK_PER_TRADE: float = 0.01    # fraction of equity risked per trade (1.0%)
 MAX_POSITIONS: int = 4           # maximum concurrent open positions
 MAX_POSITION_PCT: float = 0.25   # maximum fraction of equity in one position (25%)
 INITIAL_CAPITAL: float = 100_000.0  # starting capital for backtests

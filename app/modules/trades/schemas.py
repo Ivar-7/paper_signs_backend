@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 from pydantic import BaseModel, Field
 
@@ -17,6 +17,7 @@ class TradeOut(BaseModel):
     cost: float
     pnl: Optional[float] = None
     broker_order_id: Optional[str] = None
+    created_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
 

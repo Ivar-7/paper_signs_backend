@@ -100,7 +100,7 @@ class BacktestEngine:
         atr_multiplier: Optional[float] = None,
         commission_pct: float = 0.001,  # 0.10% per side
     ) -> None:
-        self.symbols = symbols or list(BACKTEST_PERIODS.keys())
+        self.symbols = symbols or _settings.symbol_list
         self.initial_capital = initial_capital or INITIAL_CAPITAL
         self.risk_per_trade = risk_per_trade or RISK_PER_TRADE
         self.max_positions = max_positions or MAX_POSITIONS

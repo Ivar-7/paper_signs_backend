@@ -7,7 +7,7 @@ No external API or JSON state files required. State is persisted directly via th
 from __future__ import annotations
 
 import logging
-from datetime import date
+from datetime import date, datetime
 from typing import Any, Dict, List, Optional
 
 from paper_signs_backend.app.broker.base import BaseBroker, BrokerAccount, BrokerPosition, OrderResult
@@ -141,7 +141,7 @@ class PaperBroker(BaseBroker):
                     symbol=clean_sym,
                     shares=shares,
                     avg_entry_price=round(price, 4),
-                    entry_date=date.today().isoformat(),
+                    entry_date=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
                 )
                 db.add(new_pos)
 

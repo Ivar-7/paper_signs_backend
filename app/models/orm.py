@@ -33,7 +33,7 @@ class PaperPosition(Base):
     symbol = Column(String(16), primary_key=True)
     shares = Column(Integer, nullable=False)
     avg_entry_price = Column(Float, nullable=False)
-    entry_date = Column(String(16), nullable=False)
+    entry_date = Column(String(32), nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 

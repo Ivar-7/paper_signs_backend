@@ -12,7 +12,7 @@ Fully automated paper trading bot with a premium web dashboard.
 | Entry | Close > 100-day High (shifted) AND > SMA200 |
 | Exit | Close < 50-day Low OR < SMA200 |
 | Timeframe | Daily (signal on close, fill on next open) |
-| Risk per trade | 0.5% of equity |
+| Risk per trade | 1.0% of equity |
 | ATR sizing | 2 × ATR(20) stop distance |
 | Max position | 25% of equity |
 | Max positions | 4 simultaneous |
